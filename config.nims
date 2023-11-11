@@ -19,18 +19,23 @@ template require(package: untyped) =
             let ast {.inject.} = astToStr(package)
             exec &"nimble -l install --nimbleDir:{nimble_path} {ast} -y"
 
-task install, "install deps":
-    # static:
-        # echo type(zippy)
-        # echo typeof(&"""--passL:-L"{getCurrentDir() / libs_dir }/" futhark""")
-    require zippy
-    require checksums
-    require stew
-    require bearssl
-    require httputils
-    require unittest2
-    require &"""--passL:-L"{getCurrentDir() / libs_dir }/" futhark"""
 
+task build_libpcap, "bulid libpcap":
+    echo "[Notice] this requires: Visual Studio 2015 or later , Chocolatey , CMake, Winflexbison, Git."
+    echo "I have already downloaded and set these things up in /libs folder but some tools are executeables and"
+    echo "are required to be installed on your system before the build happens. more info at: "
+    echo "(https://github.com/the-tcpdump-group/libpcap/blob/libpcap-1.10.4/doc/README.Win32.md)"
+    # cmake "-DPacket_ROOT={path-to-sdk}" {path-to-libpcap-source}
+    # echo staticExec "pkill RTT"
+    exec "cmake --version"
+    withDir "libs/libpcap/":
+        exec """cmake "-DPacket_ROOT=${projectDir}\..\npcap-sdk" ."""
+        exec """msbuild pcap.sln /m """
+
+
+
+
+        
 
 template outFile(name: string):string =  output_dir / name & (when defined(windows): ".exe" else: "")
 
@@ -86,6 +91,24 @@ template sharedBuildSwitches()=
     switch("outdir", output_dir)
     switch("out", output_file)
     switch("backend", backend)
+
+
+task install, "install nim deps":
+    require zippy
+    require checksums
+    require stew
+    require bearssl
+    require httputils
+    require unittest2
+    require &"""--passL:-L"{getCurrentDir() / libs_dir }/" futhark"""
+    #lib pcap
+    # exec """cmd /c "echo | set /p dummyName=Hello World" && exit"""
+    # exec """cmd /c "echo | set /p dummyName=Hello World" && exit"""
+    # if "y" == readLineFromStdin():
+    #     echo "yes"
+
+
+
 
 
 task test, "run tests":
