@@ -30,12 +30,12 @@ task build_libpcap, "bulid libpcap":
     exec "cmake --version"
     withDir "libs/libpcap/":
         exec """cmake "-DPacket_ROOT=${projectDir}\..\npcap-sdk" ."""
-        exec """msbuild pcap.sln /m """
+        exec """msbuild pcap.sln /m /property:Configuration=Release"""
 
 
 
 
-        
+
 
 template outFile(name: string):string =  output_dir / name & (when defined(windows): ".exe" else: "")
 
