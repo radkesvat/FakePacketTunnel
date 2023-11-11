@@ -4,3 +4,6 @@
 [submodule "libs/libnet"]
 	path = libs/libnet
 	url = https://github.com/libnet/libnet
+[submodule "libs/npcap"]
+	path = libs/npcap
+	url = https://github.com/nmap/npcap

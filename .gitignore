@@ -2,7 +2,10 @@
 node_modules
 /build
 /libs/nimble
+/libs/win_flex_bison/
+
 /dist
+
 
 
 .env.local
