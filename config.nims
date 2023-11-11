@@ -1,4 +1,4 @@
-import std/[strformat,macros,strutils,ospaths]
+import std/[strformat, macros, strutils, ospaths]
 
 const Release = true
 
@@ -8,50 +8,43 @@ const output_dir = "dist"
 const src_dir = "src"
 const nimble_path = libs_dir&"/nimble"
 
+const backend = "c"
+
 template require(package: untyped) =
     block:
-        var pack_to_install {.inject.} = astToStr(package)
-        if (astToStr(package))[0] == '\"':
-            pack_to_install[0] = ' '
-            pack_to_install[pack_to_install.high()] = ' '
-            pack_to_install = pack_to_install.replace("\\\"", "\"")
-        exec fmt"nimble -l install --nimbleDir:{nimble_path} {pack_to_install} -y"
+        when compiles(typeof(package)):
+            let str {.inject.}:string = package
+            exec &"nimble -l install --nimbleDir:{nimble_path} {str} -y"
+        else:
+            let ast {.inject.} = astToStr(package)
+            exec &"nimble -l install --nimbleDir:{nimble_path} {ast} -y"
 
 task install, "install deps":
+    # static:
+        # echo type(zippy)
+        # echo typeof(&"""--passL:-L"{getCurrentDir() / libs_dir }/" futhark""")
     require zippy
     require checksums
     require stew
     require bearssl
     require httputils
     require unittest2
-    # require chronos
-    # require stew
-    # require jsony
-    # require secp256k1
-    # require ndns
+    require &"""--passL:-L"{getCurrentDir() / libs_dir }/" futhark"""
 
-task build_server, "builds server":
-    let backend = "c"
-    let output_dir_target = output_dir
-    const output_file_name = "RTT"&(when defined(windows): ".exe" else: "")
 
-    setCommand("c", src_dir&"/main.nim")
+template outFile(name: string):string =  output_dir / name & (when defined(windows): ".exe" else: "")
+
+template sharedBuildSwitches()=
     switch("nimblePath", nimble_path&"/pkgs2")
-
-    var output = output_dir_target /  output_file_name
-    # switch("mm", "orc") not for chronos
+ # switch("mm", "orc") not for chronos
     switch("mm", "refc")
     switch("threads", "off")
     # switch("exceptions", "setjmp")
     switch("warning", "HoleEnumConv:off")
     switch("warning", "BareExcept:off")
-    
-    
     # switch("d", "useMalloc")
 
     switch("d", "asyncBackend:chronos")
- 
-    # switch("cc", "clang")
 
     switch("path", src_dir)
     switch("path", libs_dir)
@@ -59,14 +52,13 @@ task build_server, "builds server":
     switch("passC", "-I "&libs_dir&"/hwinfo/include/")
 
     switch("nimcache", "build"/hostOS/hostCPU)
-    # switch("define", "logGC")
     # switch("define", "ssl")
+    # switch("passC", "-I "&libs_dir&"/hwinfo/include/")
 
     when Release:
         switch("opt", "speed")
         switch("debugger", "off")
         switch("d", "release")
-        # switch("d", "danger") #disables assertions therfore won't work!
 
         switch("passL", " -s")
         switch("debuginfo", "off")
@@ -74,27 +66,40 @@ task build_server, "builds server":
         switch("passC", "-flto")
         switch("passL", "-flto")
 
-        switch("obj_checks","off")
-        switch("field_checks","off")
-        switch("range_checks","off")
-        switch("bound_checks","off")
-        switch("overflow_checks","off")
+        switch("obj_checks", "off")
+        switch("field_checks", "off")
+        switch("range_checks", "off")
+        switch("bound_checks", "off")
+        switch("overflow_checks", "off")
+        switch("floatChecks", "off")
+        switch("nanChecks", "off")
+        switch("infChecks", "off")
         # switch("assertions","off")
-        switch("stacktrace","off")
-        switch("linetrace","off")
-        switch("debugger","off")
-        switch("line_dir","off")
-
-
+        switch("stacktrace", "off")
+        switch("linetrace", "off")
+        switch("debugger", "off")
+        switch("line_dir", "off")
         # switch("passL", " -static")
         # switch("passL", " -static-libgcc")
         # switch("passL", " -static-libstdc++")
- 
-
-
+        
+    switch("outdir", output_dir)
+    switch("out", output_file)
     switch("backend", backend)
-    switch("outdir", output_dir_target)
-    switch("out", output)
+
+
+task test, "run tests":
+    const output_file = outFile("test")
+    setCommand("c", src_dir / "test" / "test.nim")
+    sharedBuildSwitches()
+    switch("r", "")
+
+task build_server, "builds server":
+    const output_file = outFile("RTT")
+    setCommand("c", src_dir&"/main.nim")
+
+    sharedBuildSwitches()
+
 
 
 
@@ -102,9 +107,9 @@ task build, "builds all":
 
     # echo staticExec "pkill RTT"
     # echo staticExec "taskkill /IM RTT.exe /F"
-    
+
     exec "nim build_server"
     # withDir(output_dir):
         # exec "chmod +x RTT"
         # echo staticExec "./RTT >> output.log 2>&1"
-        
+
