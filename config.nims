@@ -128,18 +128,21 @@ task build_libpcap, "bulid libpcap x64 static":
 
 task build_libnet, "builds libnet(1.2) x64 static":
     when defined(windows):
-        echo "[Notice] all the painful build steps are already done, you only need make and a gcc"
-        
+        echo "[Notice] you need to do extra steps to be able to build, you have to generate and run configure script before make"
+        # Mysis Mingw64 
         # pacman -Syu --noconfirm
         # pacman -S --noconfirm git wget tar gzip autoconf automake make libtool patch unzip xz bison flex pkg-config
         # pacman -S --noconfirm mingw-w64-x86_64-gcc
-        # CFLAGS="-I../win32/wpdpack/Include/" LDFLAGS="-L$(pwd)/win32/wpdpack/Lib/x64/" ./configure --prefix=/mingw64 --disable-shared
-
+        # ./autogen.sh
+        # CFLAGS="-I../win32/wpdpack/Include/" LDFLAGS="-L../win32/wpdpack/Lib/x64/ -Lwin32/wpdpack/Lib/x64/" ./configure --prefix=/mingw64 --disable-shared
         exec "gcc --version" 
         exec "make --version"
         
         withDir "libs/libnet/":
-            exec """make clean"""
+            if not fileExists("Makefile"):
+                echo "[Error] you did not generate the MakeFile, read the docs for a how-to guide."
+                echo "unfortunately these steps required software installation and i couldnt script them."
+
             exec """make"""
             cpFile("src"/".libs"/"libnet.a",".."/"libnet.a")
     else:
@@ -151,6 +154,7 @@ task build_libnet, "builds libnet(1.2) x64 static":
         exec "automake --version"
         exec "libtool --version"
         withDir "libs/libnet/":
+            exec "./autogen.sh"
             exec "./configure --disable-shared"
             exec "make"
 
