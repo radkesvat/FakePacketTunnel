@@ -4,3 +4,6 @@
 [submodule "libs/libpcap"]
 	path = libs/libpcap
 	url = https://github.com/radkesvat/libpcap
+[submodule "libs/npcap"]
+	path = libs/npcap
+	url = https://github.com/radkesvat/npcap

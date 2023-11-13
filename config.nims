@@ -93,6 +93,7 @@ task build_libpcap, "bulid libpcap x64 static":
         
         withDir "libs/libpcap/":
             exec """cmake "-DPacket_ROOT=..\npcap-sdk" -G "MinGW Makefiles" -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++ ."""
+            exec """make clean"""
             exec """make"""
             cpFile("libpcap.a",".."/"libpcap.a")
 
@@ -116,6 +117,7 @@ task build_libpcap, "bulid libpcap x64 static":
             ### autogen way
             exec "./autogen.sh" 
             exec "./configure" 
+            exec """make clean"""
             exec "make"
             cpFile("libpcap.a",".."/"libpcap.a")
             
@@ -143,6 +145,7 @@ task build_libnet, "builds libnet(1.2) x64 static":
                 echo "[Error] you did not generate the MakeFile, read the docs for a how-to guide."
                 echo "unfortunately these steps required software installation and i couldnt script them."
 
+            exec """make clean"""
             exec """make"""
             cpFile("src"/".libs"/"libnet.a",".."/"libnet.a")
     else:
@@ -156,6 +159,7 @@ task build_libnet, "builds libnet(1.2) x64 static":
         withDir "libs/libnet/":
             exec "./autogen.sh"
             exec "./configure --disable-shared"
+            exec """make clean"""
             exec "make"
 
 
