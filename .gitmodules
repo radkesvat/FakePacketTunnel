@@ -1,9 +1,9 @@
-[submodule "libs/libpcap"]
-	path = libs/libpcap
-	url = https://github.com/radkesvat/libpcap
 [submodule "libs/libnet"]
 	path = libs/libnet
 	url = https://github.com/radkesvat/libnet
 [submodule "libs/npcap"]
 	path = libs/npcap
 	url = https://github.com/nmap/npcap
+[submodule "libs/libpcap"]
+	path = libs/libpcap
+	url = https://github.com/radkesvat/libpcap
