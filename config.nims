@@ -92,7 +92,7 @@ task build_libpcap, "bulid libpcap x64 static":
         exec "make --version"
         
         withDir "libs/libpcap/":
-            exec """cmake "-DPacket_ROOT=${projectDir}\..\npcap-sdk" -G "MinGW Makefiles" -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++ ."""
+            exec """cmake "-DPacket_ROOT=..\npcap-sdk" -G "MinGW Makefiles" -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++ ."""
             exec """make"""
             # exec """msbuild pcap.sln /m /property:Configuration=Release"""
 
