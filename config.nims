@@ -21,22 +21,46 @@ template require(package: untyped) =
 
 
 task build_libpcap, "bulid libpcap":
-    echo "[Notice] this requires: Visual Studio 2015 or later , Chocolatey , CMake, Winflexbison, Git."
-    echo "I have already downloaded and set these things up in /libs folder but some tools are executeables and"
-    echo "are required to be installed on your system before the build happens. more info at: "
-    echo "(https://github.com/the-tcpdump-group/libpcap/blob/libpcap-1.10.4/doc/README.Win32.md)"
-    # cmake "-DPacket_ROOT={path-to-sdk}" {path-to-libpcap-source}
-    # echo staticExec "pkill RTT"
-    exec "cmake --version"
-    withDir "libs/libpcap/":
-        exec """cmake "-DPacket_ROOT=${projectDir}\..\npcap-sdk" ."""
-        exec """msbuild pcap.sln /m /property:Configuration=Release"""
+    when defined(windows):
+        echo "[Notice] this requires: Visual Studio 2015 or later,GNU Make+gcc , Chocolatey , CMake, Winflexbison, Git."
+        echo "I have already downloaded and set these things up in /libs folder but some tools are executeables and"
+        echo "are required to be installed on your system before the build happens. more info at: "
+        echo "(https://github.com/the-tcpdump-group/libpcap/blob/libpcap-1.10.4/doc/README.Win32.md)"
+        
+        exec "gcc --version" 
+        exec "cmake --version" 
+        exec "make --version"
+        
+        withDir "libs/libpcap/":
+            exec """cmake "-DPacket_ROOT=${projectDir}\..\npcap-sdk" -G "MinGW Makefiles" -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++ ."""
+            exec """make"""
+            # exec """msbuild pcap.sln /m /property:Configuration=Release"""
 
+    else:
+        echo "[Notice] this requires: build tools (gcc+make),autoconf, CMake, Git."
+        echo "I have already downloaded and set these things up in /libs folder but some tools are executeables and"
+        echo "are required to be installed on your system before the build happens. more info at: "
+        echo "https://github.com/the-tcpdump-group/libpcap/blob/master/INSTALL.md"
+        #check for tools that must be installed
+        exec "cmake --version" 
+        exec "autoconf --version" 
+        exec "flex --version" 
+        exec "bison --version" 
+        exec "gcc --version" 
+        exec "make --version" 
 
+        withDir "libs/libpcap/":
+            ### autogen way
+            exec "./autogen.sh" 
+            exec "./configure" 
+            exec "make"
 
-
-
-
+            ### cmake way
+            # exec "mkdir bulid"
+            # withDir "bulid":
+            #     exec """cmake "-DPacket_ROOT=${projectDir}\..\npcap-sdk" -G "Unix Makefiles" -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++ .."""
+            # exec "make"
+    
 template outFile(name: string):string =  output_dir / name & (when defined(windows): ".exe" else: "")
 
 template sharedBuildSwitches()=
