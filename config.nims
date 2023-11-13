@@ -94,6 +94,8 @@ task build_libpcap, "bulid libpcap x64 static":
         withDir "libs/libpcap/":
             exec """cmake "-DPacket_ROOT=..\npcap-sdk" -G "MinGW Makefiles" -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++ ."""
             exec """make"""
+            cpFile("libpcap.a",".."/"libpcap.a")
+
             # exec """msbuild pcap.sln /m /property:Configuration=Release"""
 
     else:
@@ -115,7 +117,8 @@ task build_libpcap, "bulid libpcap x64 static":
             exec "./autogen.sh" 
             exec "./configure" 
             exec "make"
-
+            cpFile("libpcap.a",".."/"libpcap.a")
+            
             ### cmake way
             # exec "mkdir bulid"
             # withDir "bulid":

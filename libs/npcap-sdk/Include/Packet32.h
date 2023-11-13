@@ -115,6 +115,12 @@
  *  @{
  */
 
+//these 4 lines <radkesvat> added for mingw build on winodws (building libpcap from)
+#ifndef _Post_invalid_ 
+#define _Post_invalid_
+//#include <sal.h>
+#endif
+
 #ifndef __PACKET32
 #define __PACKET32
 
