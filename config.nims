@@ -115,7 +115,7 @@ task install, "install nim deps":
     # exec """cmd /c "echo | set /p dummyName=Hello World" && exit"""
     # exec """cmd /c "echo | set /p dummyName=Hello World" && exit"""
     echo "Attempt to download submodules"
-    exec "git submodule update --recursive --remote"
+    exec "git submodule update --recursive"
     echo "Finished prepairing required tools. \n"
 
     echo "[Notice] In order build this project , you have to build libnet and libpcap"
