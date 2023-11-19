@@ -106,6 +106,7 @@ task install, "install nim deps":
     require zippy
     require checksums
     require stew
+    require results
     require bearssl
     require httputils
     require unittest2
@@ -115,12 +116,12 @@ task install, "install nim deps":
     # exec """cmd /c "echo | set /p dummyName=Hello World" && exit"""
     echo "Attempt to download submodules"
     exec "git submodule update --recursive --remote"
-    echo "Finished prepairing required tools. \n\n"
+    echo "Finished prepairing required tools. \n"
 
     echo "[Notice] In order build this project , you have to build libnet and libpcap"
     echo "run: nim build_libpcap"
     echo "then: nim build_libnet"
-    echo "then: nim build"
+    echo "then: nim build\n"
 
 template sharedBuildSwitches(){.dirty.} =
     switch("nimblePath", nimble_path&"/pkgs2")
