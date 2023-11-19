@@ -7,3 +7,6 @@
 [submodule "libs/npcap"]
 	path = libs/npcap
 	url = https://github.com/radkesvat/npcap
+[submodule "libs/chronos"]
+	path = libs/chronos
+	url = https://github.com/radkesvat/nim-chronos
