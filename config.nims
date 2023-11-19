@@ -187,7 +187,7 @@ task test, "test a single file":
     if not fileExists(src_dir / tests_dir / file):
         echo &"file {src_dir / tests_dir / file} dose not exists"; return
 
-    let build_cache = "Tests" / build_cache
+    let build_cache = "Tests" / file[0 .. file.rfind('.')] / build_cache
     const output_dir = output_dir / tests_dir
     let output_file = outFile(output_dir, file)
 
@@ -226,7 +226,7 @@ task build_fpt_debug, "builds fpt debug":
 
 
 #only a shortcut
-task build, "builds only fpt":
+task build, "builds only fpt (debug)":
     # echo staticExec "pkill RTT"
     # echo staticExec "taskkill /IM RTT.exe /F"
     exec "nim build_fpt_debug"

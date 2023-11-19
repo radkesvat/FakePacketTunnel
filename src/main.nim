@@ -1,1 +1,1 @@
-echo "hallo"
+echo "hi"
