@@ -1,5 +1,8 @@
 import std/[strformat, macros, strutils, ospaths]
 
+
+const output_name = "FPT"
+
 const libs_dir = "libs"
 const output_dir = "dist"
 const src_dir = "src"
@@ -144,6 +147,8 @@ template sharedBuildSwitches(){.dirty.} =
     # switch("define", "ssl")
     # switch("passC", "-I "&libs_dir&"/hwinfo/include/")
 
+
+ 
     when Release:
         switch("opt", "speed")
         switch("debugger", "off")
@@ -213,7 +218,7 @@ task build_fpt_release, "builds fpt release":
     const Release = true
     let build_cache = "Release" / build_cache
     const output_dir = output_dir / "release"
-    const output_file = outFile(output_dir, "RTT")
+    const output_file = outFile(output_dir, output_name)
     setCommand("c", src_dir&"/main.nim")
     sharedBuildSwitches()
 
@@ -221,17 +226,17 @@ task build_fpt_debug, "builds fpt debug":
     const Release = false 
     let build_cache = "Debug" / build_cache
     const output_dir = output_dir / "debug"
-    const output_file = outFile(output_dir, "RTT")
+    const output_file = outFile(output_dir, output_name)
     setCommand("c", src_dir&"/main.nim")
     sharedBuildSwitches()
 
 
 #only a shortcut
 task build, "builds only fpt (debug)":
-    # echo staticExec "pkill RTT"
-    # echo staticExec "taskkill /IM RTT.exe /F"
+    # echo staticExec "pkill FPT"
+    # echo staticExec "taskkill /IM FPT.exe /F"
     exec "nim build_fpt_debug"
     # withDir(output_dir):`
-        # exec "chmod +x RTT"
-        # echo staticExec "./RTT >> output.log 2>&1"
+        # exec "chmod +x FPT"
+        # echo staticExec "./FPT >> output.log 2>&1"
 
