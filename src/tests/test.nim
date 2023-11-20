@@ -16,6 +16,7 @@ suite "description for this stuff":
   test "slightly less obvious stuff":
     # print a nasty message and move on, skipping
     # the remainder of this block
+    skip();return
     check(1 != 1)
     check("asd"[2] == 'd')
   
